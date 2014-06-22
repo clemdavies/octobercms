@@ -1,0 +1,23 @@
+# ===================================
+#  Column Definitions
+# ===================================
+
+columns:
+    steam_id_input:
+        label: Steam ID Input
+        type: text
+    steam_id_sixtyfour:
+        label: Steam ID 64
+        type: number
+    persona_name:
+        label: Persona Name
+        type: text
+    persona_state:
+        label: Persona State
+        type: number
+    profile_url:
+        label: Profile Url
+        type: text
+    profile_image_url:
+        label: Profile Image Url
+        type: text

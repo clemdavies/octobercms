@@ -1,0 +1,33 @@
+# ===================================
+#  Column Definitions
+# ===================================
+
+columns:
+    user_id:
+        label: User ID
+        type: number
+        relation: user
+    name:
+        label: Game Name
+        type: text
+    app_id:
+        label: App ID
+        type: number
+    app_url:
+        label: App Url
+        type: text
+    app_image_url:
+        label: App Image Url
+        type: text
+    rank:
+        label: Rank
+        type: number
+    playtime_forever:
+        label: Playtime Forever
+        type: number
+    playtime_recent:
+        label: Playtime 2 Weeks
+        type: number
+    active:
+        label: Active
+        type: switch

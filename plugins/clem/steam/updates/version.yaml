@@ -1,0 +1,6 @@
+1.0.1:
+    - Steam Api supports getplayersummaries and getrecentlyplayedgames.
+    - Create Steam Users table
+    - CreateUsersTable.php
+    - Create Steam Games table
+    - CreateGamesTable.php
