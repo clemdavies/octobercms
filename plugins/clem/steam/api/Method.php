@@ -47,10 +47,12 @@ class Method
         $this->passedParameters = $parameters;
         $this->api = Api::instance();
 
+        // pull url template from config for child calling class
         $this->urlTemplate = Config::get('clem.steam::api.urltemplates.'.Config::get('clem.steam::api.methods.'.$this->name.'.urltemplate'));
         // config static parameters
         $this->doExtensionMethod('preInitParameters');
         $this->initParameters();
+        $this->validateSteamIdInput();
         // check if api key is required and set it in the parameters
         $this->doExtensionMethod('preUseApiKey');
         $this->useApiKey();
@@ -59,10 +61,21 @@ class Method
         $this->addParameters( $this->passedParameters );
 
         $this->doExtensionMethod('preUrlBuilder');
-        $this->urlBuilder = new UrlBuilder($this->parameters,$this->urlTemplate);
+        $this->urlBuilder = new UrlBuilder( $this->parameters,$this->urlTemplate );
         $this->url = $this->urlBuilder->getUrl();
     }
 
+
+    private function validateSteamIdInput(){
+        if ( array_key_exists('steam_id_input', $this->passedParameters) ) {
+            $steamid = $this->api->steam_id64( $this->passedParameters['steam_id_input'] );
+            if ( property_exists( $this, 'steamIdInput') ) {
+                $this->steamIdInput = $this->passedParameters['steam_id_input'];
+            }
+            $this->passedParameters['steamid'] = $steamid;
+            unset( $this->passedParameters['steam_id_input'] );
+        }
+    }
 
     /**
     *   Allow a method to run After parameter initialization but Before url is created
@@ -71,7 +84,7 @@ class Method
     private function doExtensionMethod( $methodName ){
         if( method_exists( $this,$methodName ) ){
             $reflection = new ReflectionMethod($this, $methodName );
-            if (!$reflection->isProtected()) {
+            if ( !$reflection->isProtected() ) {
                 throw new RuntimeException('Method '.$methodName.' must be set to protected or removed from '.get_class($this));
             }
             $this->$methodName();
@@ -174,6 +187,10 @@ class Method
     }
     public function getApi(){
         return $this->api;
+    }
+
+    public function getResponse(){
+        return $this->response;
     }
 
 

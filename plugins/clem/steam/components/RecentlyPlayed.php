@@ -27,8 +27,6 @@ class RecentlyPlayed extends ComponentBase
     // instance based settings
     public function defineProperties()
     {
-        //echo preg_match(Config::get('clem.steam::patterns.steam_id_input'), 'STEAM_0:1:32417108');
-        //exit;
         return [
             'steam_id_input' => [
                 'description'       => 'The Steam account ID to collect recently played information.',
@@ -38,14 +36,6 @@ class RecentlyPlayed extends ComponentBase
                 'validationPattern' => Config::get('clem.steam::api.patterns.steam_id_input'),
                 'validationMessage' => 'The Steam Account ID is required. Format: STEAM_X:1:Y. X = [0-5] and Y = A number. Or a 64 bit representation of xxxxxxxx where x is a number.'
             ]
-            /*,'count' => [
-                'description'       => 'The maximum number of games to display.',
-                'title'             => 'Maximum Number Of Games',
-                'default'           => '5',
-                'type'              => 'string',
-                'validationPattern' => 'Config::get(clem.steam::patterns.count)',
-                'validationMessage' => 'Maximum number of games must be [1-10].'
-            ]*/
         ];
     }
     // add conversion for starting index and ending index?
@@ -54,24 +44,14 @@ class RecentlyPlayed extends ComponentBase
         if ( $this->steamUser->isEmpty() ) {
             $this->createUser();
         }
+        Debug::dump($this->steamUser);
+        exit;
     }
     // only save user to database if player information is succesfully fetched from the steam pi
     private function createUser(){
-        $api = Api::instance();
-
-        $steam_id_input = $this->property( 'steam_id_input' );
-        $steamid        = $api->steam_id64( $steam_id_input );
-
-        $this->setProperty( 'steamid',$steamid );
-
         $player = new PlayerSummaries( $this->properties );
-        $data = $player->getData();
-
-        Debug::dump($data);
-        exit;
-
-        $steamUser = new User($data);
-
+        $userData = $player->getDataForUserModel( );
+        $this->steamUser = User::create($userData);
     }
 
     public function onRun()

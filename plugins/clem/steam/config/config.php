@@ -17,9 +17,10 @@ return array(
             ),
         'urltemplates' => array(
             'data'  => 'http://api.steampowered.com/{{interface}}/{{method}}/v{{version}}/',
-            'image' => 'http://media.steampowered.com/steamcommunity/public/images/apps/{{appid}}/{{logoid}}.jpg',
-            'game'  => 'http://store.steampowered.com/app/{{appid}}/',
+            'app_image' => 'http://media.steampowered.com/steamcommunity/public/images/apps/{{appid}}/{{logoid}}.jpg',
+            'app_page'  => 'http://store.steampowered.com/app/{{appid}}/',
             ),
+
         'methods' => array(
             'getplayersummaries' => array(
                 'urltemplate' => 'data',
@@ -52,6 +53,22 @@ return array(
                         )
                     )
                 )
-            )
+            ),// /methods
+
+        'models' => array(
+            'user' => array(
+                'dbdatakeys' => array(
+                        'steam_id_input'     => null,
+                        'steam_id_sixtyfour' => 'steamid',
+                        'persona_name'       => 'personaname',
+                        'persona_state'      => 'personastate',
+                        'profile_url'        => 'profileurl',
+                        'profile_image_url'  => 'avatarmedium'
+                    )
+                ),
+            'games' => array(
+                'dbdatakeys' => array()
+                )
+            )// /models
         )
     );

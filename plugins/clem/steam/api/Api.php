@@ -59,19 +59,19 @@ Final class Api
             if ( PHP_INT_SIZE !== 8 ) {
                 // 64 bit
                 // W=Z*2+Y
-                $result = $Z*2+$Y;
+                $steamid = $Z*2+$Y;
             } else {
                 // 32 bit
                 // W=Z*2+V+Y
-                $result = $Z*2+$V+$Y;
+                $steamid = $Z*2+$V+$Y;
             }
-        }else{
-            //check for validity?
-            //regex on steamid64 rule in config
-            throw new RuntimeException('Steamid Already converted how to test though?');
+        }
+        if ( !preg_match('/'.Config::get('clem.steam::api.patterns.steam_id64').'/', $steamid) ) {
+            // failed validity
+            throw new RuntimeException('steam_id failed conversion check.',$steamid);
         }
 
-        return $result;
+        return $steamid;
     }
 
     public function getKey() {

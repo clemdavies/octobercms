@@ -11,7 +11,7 @@ class Games extends Model {
     protected $table = 'clem_steam_games';
 
     public $rules = [
-        'user_id'          => array( 'required', 'unique', 'exists:user,id' ),
+        'user_id'          => array( 'required', 'unique:clem_steam_games,user_id', 'exists:user,id' ),
         'name'             => array( 'required' ),
         'app_id'           => array( 'required', 'integer' ),
         'app_url'          => array( 'required' ),
