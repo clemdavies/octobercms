@@ -5,6 +5,7 @@ use Clem\Steam\Api\Api;
 use Clem\Steam\Api\Methods\RecentlyPlayedGames;
 use Clem\Steam\Api\Methods\PlayerSummaries;
 use Clem\Steam\Models\User;
+use Clem\Steam\Models\Games;
 use Config;
 use Clem\Helpers\Debug;
 
@@ -38,13 +39,13 @@ class RecentlyPlayed extends ComponentBase
             ]
         ];
     }
-    // add conversion for starting index and ending index?
+    // test for invalid user creation from an invalid steam_id_input
     public function updateProperties(){
-        $this->steamUser = User::where( 'steam_id_input',$this->property('steam_id_input') )->get();
-        if ( $this->steamUser->isEmpty() ) {
+        $this->steamUser = User::where( 'steam_id_input',$this->property('steam_id_input') )->first();
+        if ( is_null($this->steamUser) ) {
             $this->createUser();
         }
-        Debug::dump($this->steamUser);
+        Debug::dump($this->steamUser->games);
         exit;
     }
     // only save user to database if player information is succesfully fetched from the steam pi

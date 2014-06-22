@@ -21,7 +21,7 @@ class Image
         if ($instance === null) {
             $instance = new Image();
             $instance->urlBuilder = new UrlBuilder( $parameters, Config::get('clem.steam::api.urltemplates.image') );
-        }else{
+        } else {
             $instance->urlBuilder->reconstruct( $parameters, Config::get('clem.steam::api.urltemplates.image') );
         }
         return $instance->urlBuilder->getUrl();

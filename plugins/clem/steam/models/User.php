@@ -1,6 +1,8 @@
 <?php namespace Clem\Steam\Models;
 
+use Clem\Steam\Models\Game;
 use Model;
+
 
 /**
  * A user on Steam.
@@ -28,6 +30,7 @@ class User extends Model {
     ];
 
     public $hasMany = [
-        'games' => ['Games', 'primaryKey' => 'id']
+        'games' => ['Clem\Steam\Models\Game']
     ];
+
 }

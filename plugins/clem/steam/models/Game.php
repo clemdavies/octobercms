@@ -1,12 +1,12 @@
 <?php namespace Clem\Steam\Models;
 
+use Clem\Steam\Models\User;
 use Model;
-
 /**
  * Games that a user has played recently on steam.
  */
 
-class Games extends Model {
+class Game extends Model {
 
     protected $table = 'clem_steam_games';
 
@@ -23,7 +23,7 @@ class Games extends Model {
     ];
 
     public $belongsTo = [
-        'user' => ['User', 'foreignKey' => 'id']
+        'user' => ['User']
     ];
 
 }
