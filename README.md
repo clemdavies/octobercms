@@ -12,8 +12,11 @@ Regardless the code is here for stealing from anyway.
   * Steam
   * Twitter
   * Github
-* Some walkthroughs or guides to various web development
-* Also a showcase area for little projects I work on as a hobby.
+  * Guides (see below)
+  * Showcase (see below)
+* Some walkthroughs or guides to various web development aspects.
+  * Percentage based LESS/CSS responsive grid/column system.
+* A showcase area for little projects I work on as a hobby.
   * Tetris AI program
   * Jquery plugins
 
