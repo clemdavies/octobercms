@@ -5,8 +5,11 @@ use Clem\Steam\Api\Api;
 use Clem\Steam\Api\Methods\RecentlyPlayedGames;
 use Clem\Steam\Api\Methods\PlayerSummaries;
 use Clem\Steam\Models\User;
-use Clem\Steam\Models\Games;
+use Clem\Steam\Models\Game;
 use Config;
+use Carbon\Carbon;
+
+
 use Clem\Helpers\Debug;
 
 /**
@@ -16,6 +19,7 @@ use Clem\Helpers\Debug;
 class RecentlyPlayed extends ComponentBase
 {
     private $steamUser;
+    private $steamGames;
 
     public function componentDetails()
     {
@@ -39,29 +43,114 @@ class RecentlyPlayed extends ComponentBase
             ]
         ];
     }
-    // test for invalid user creation from an invalid steam_id_input
     public function updateProperties(){
+        $this->updateSteamUser();
+        $this->updateSteamGames();
+    }
+
+    // test for invalid user creation from an invalid steam_id_input
+    private function updateSteamUser(){
         $this->steamUser = User::where( 'steam_id_input',$this->property('steam_id_input') )->first();
         if ( is_null($this->steamUser) ) {
-            $this->createUser();
+            // create user
+            $player = new PlayerSummaries( $this->properties );
+            $userData = $player->fetchDataForUserModel();
+            $this->steamUser = User::create( $userData );
+        }else if( $this->userIsExpired() ) {
+            // update user
+            $player = new PlayerSummaries( $this->properties );
+            $userData = $player->fetchDataForUserModel();
+            $this->steamUser->updateWith( $userData );
         }
+    }
+
+    //
+    private function updateSteamGames(){
+
+        if ( !$this->steamUser->games->count ) {
+            //fetch games
+
+            $this->updateSteamGames();
+        }
+
+        // retrive active games only
+        $this->steamGames = $this->steamUser->games->filter(function($game){
+            return $game->active;
+        });
+        if ( $this->gameIsExpired() ) {
+            //update
+
+        }// else return
+    }
+
+    private function dump_dates($collection){
+        echo 'start<br/>';
+        foreach ($collection as $object) {
+            Debug::dump($object->name);
+            Debug::dump($object->created_at);
+        }
+        echo 'done<br/>';
+    }
+
+    /**
+     *   Carbon add methods alters instance
+     *   @return boolean
+     */
+    private function isExpired($carbonObject,$name){
+        foreach( Config::get('clem.steam::api.expire.'.$name) as $time => $amount ){
+            $method = 'add'.$time;
+            $carbonObject->$method($amount);
+        }
+        return Carbon::now()->gt($carbonObject);
+    }
+    private function gameIsExpired(){
+        return $this->isExpired( $this->steamGames->max( 'updated_at' ), 'game' );
+    }
+    private function userIsExpired(){
+        return $this->isExpired( $this->steamUser->updated_at, 'user' );
+    }
+
+
+    /*
+        determine if user needs to be updated
+        determine if games need to be updated
+        build output from template
+    */
+    public function onRun(){
+        $this->updateSteamUser();
+        $this->updateSteamGames();
+        $this->buildComponent();
+
+        $activeGames = $this->steamUser->games->filter(function($game){
+            return $game->active;
+        });
+
+        $lastUpdated = $activeGames->max('updated_at');
+        $this->addExpire($lastUpdated,'games');
+        $now = Carbon::now();
+
+
+        if ( $now->gt($lastUpdated) ) {
+            echo 'udpate it';
+        }else{
+            echo 'don\'t update it';
+        }
+        exit;
+
+        $this->dump_dates($this->steamUser->games);
+        $this->dump_dates($this->steamUser->games->sortBy('updated_at'));
+        exit;
+
+
         Debug::dump($this->steamUser->games);
-        exit;
-    }
-    // only save user to database if player information is succesfully fetched from the steam pi
-    private function createUser(){
-        $player = new PlayerSummaries( $this->properties );
-        $userData = $player->getDataForUserModel( );
-        $this->steamUser = User::create($userData);
-    }
-
-    public function onRun()
-    {
-        $this->updateProperties();
-        $games = new RecentlyPlayedGames( $this->properties );
-        Debug::dump($games);
+        Debug::dump($this->steamUser->games->sortBy(function($game){
+                return $game->updated_at;
+        }));
         exit;
 
+        new RecentlyPlayedGames( ['steamid' => $this->steamUser->steam_id_sixtyfour] );
+
+        // template output
         $this->page['username'] = $this->getUser();
         $this->page['games'] = $this->getGames();
     }

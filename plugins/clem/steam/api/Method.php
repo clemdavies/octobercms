@@ -43,7 +43,10 @@ class Method
     *   This allows a single construction method to be called and defer validation
     *   upwards and into a single place within the code. ie; Here
     */
-    public function __construct($parameters){
+    public function __construct( $parameters ){
+
+        $this->name = strtolower( get_class($this) );
+
         $this->passedParameters = $parameters;
         $this->api = Api::instance();
 

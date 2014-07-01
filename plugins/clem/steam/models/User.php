@@ -33,4 +33,20 @@ class User extends Model {
         'games' => ['Clem\Steam\Models\Game']
     ];
 
+    public static $update = ['persona_name','persona_state','profile_url','profile_image_url'];
+
+    public function updateWith( $user ){
+        if ( $user instanceof Self ) {
+            foreach ( Self::$update as $key ) {
+                $this->$key = $user->$key;
+            }
+            $this->save();
+        }else if( is_array($user) ){
+            foreach ( Self::$update as $key ) {
+                $this->$key = $user[$key];
+            }
+            $this->save();
+        }
+    }
+
 }

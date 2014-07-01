@@ -10,21 +10,20 @@ use Clem\Helpers\Debug;
 */
 
 // does NOT support multiple steamids at this time.
-class PlayerSummaries extends Method
+class GetPlayerSummaries extends Method
 {
     protected $steamIdInput;
 
     public function __construct( $parameters ){
-        $this->setName('getplayersummaries');
         parent::__construct( $parameters );
     }
 
     protected function preAddParameters(){
-        $this->formatParametersWithSteamIds();
+        $this->formatApiKeys();
     }
 
     // convuluted and probably unnecessary
-    private function formatParametersWithSteamIds(){
+    private function formatApiKeys(){
         foreach ( $this->passedParameters as $key => $value) {
             if ( $key == 'steamid' || $key == 'steamids' ) {
                 if ( is_array($value) ) {
@@ -39,14 +38,9 @@ class PlayerSummaries extends Method
         }
     }
 
-    public function getData(){
-        $this->callUrl();
-        return $this->response;
-    }
-
     // only works with a single user
-    public function getDataForUserModel( ){
-        $this->getData();
+    public function fetchDataForUserModel( ){
+        $this->callUrl();
 
         $modelData = Config::get('clem.steam::api.models.user.dbdatakeys');
 

@@ -12,7 +12,7 @@ class CreateUsersTable extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->string('steam_id_input');
-            $table->integer('steam_id_sixtyfour');
+            $table->bigInteger('steam_id_sixtyfour');
             $table->string('persona_name');
             $table->tinyInteger('persona_state');
             $table->string('profile_url');

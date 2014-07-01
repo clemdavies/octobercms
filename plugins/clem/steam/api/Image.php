@@ -20,9 +20,9 @@ class Image
         static $instance = null;
         if ($instance === null) {
             $instance = new Image();
-            $instance->urlBuilder = new UrlBuilder( $parameters, Config::get('clem.steam::api.urltemplates.image') );
+            $instance->urlBuilder = new UrlBuilder( $parameters, Config::get('clem.steam::api.urltemplates.app_image') );
         } else {
-            $instance->urlBuilder->reconstruct( $parameters, Config::get('clem.steam::api.urltemplates.image') );
+            $instance->urlBuilder->reconstruct( $parameters, Config::get('clem.steam::api.urltemplates.app_image') );
         }
         return $instance->urlBuilder->getUrl();
     }
