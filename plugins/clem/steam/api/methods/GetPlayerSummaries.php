@@ -42,17 +42,17 @@ class GetPlayerSummaries extends Method
     public function fetchDataForUserModel( ){
         $this->callUrl();
 
-        $modelData = Config::get('clem.steam::api.models.user.dbdatakeys');
+        $this->modelData = Config::get('clem.steam::api.models.user.dbdatakeys');
 
-        foreach ( $modelData as $dbKey => $dataKey) {
+        foreach ( $this->modelData as $dbKey => $dataKey) {
             if ( is_null($dataKey) ) {
                 continue;
             }
-            $modelData[$dbKey] = $this->response->players[0]->$dataKey;
+            $this->modelData[$dbKey] = $this->response->players[0]->$dataKey;
         }
-        $modelData['steam_id_input'] = $this->steamIdInput;
+        $this->modelData['steam_id_input'] = $this->steamIdInput;
 
-        return $modelData;
+        return $this->modelData;
     }
 
 

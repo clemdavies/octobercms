@@ -9,6 +9,7 @@ use Clem\Helpers\Debug;
 
 use Config;
 use ReflectionMethod;
+use ReflectionClass;
 use RuntimeException;
 
 /**
@@ -44,8 +45,7 @@ class Method
     *   upwards and into a single place within the code. ie; Here
     */
     public function __construct( $parameters ){
-
-        $this->name = strtolower( get_class($this) );
+        $this->extractName();
 
         $this->passedParameters = $parameters;
         $this->api = Api::instance();
@@ -66,6 +66,11 @@ class Method
         $this->doExtensionMethod('preUrlBuilder');
         $this->urlBuilder = new UrlBuilder( $this->parameters,$this->urlTemplate );
         $this->url = $this->urlBuilder->getUrl();
+    }
+
+    private function extractName(){
+        $class = new ReflectionClass( get_class($this) );
+        $this->name = strtolower( $class->getShortName() );
     }
 
 

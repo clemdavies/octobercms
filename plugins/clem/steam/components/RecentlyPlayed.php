@@ -2,8 +2,8 @@
 
 use Cms\Classes\ComponentBase;
 use Clem\Steam\Api\Api;
-use Clem\Steam\Api\Methods\RecentlyPlayedGames;
-use Clem\Steam\Api\Methods\PlayerSummaries;
+use Clem\Steam\Api\Methods\GetRecentlyPlayedGames;
+use Clem\Steam\Api\Methods\GetPlayerSummaries;
 use Clem\Steam\Models\User;
 use Clem\Steam\Models\Game;
 use Config;
@@ -14,6 +14,9 @@ use Clem\Helpers\Debug;
 
 /**
 *   Component that shows a feed of games played on steam chronologically.
+*
+*   Will Break if no games are found on user
+*   Might break if steam_id_input fails to find a user on steam.
 */
 
 class RecentlyPlayed extends ComponentBase
@@ -64,23 +67,37 @@ class RecentlyPlayed extends ComponentBase
         }
     }
 
-    //
+    // will infinitely loop if no games can be fetched.
     private function updateSteamGames(){
 
-        if ( !$this->steamUser->games->count ) {
+        // if no games exist fetch them
+        if ( !$this->steamUser->games->count() ) {
             //fetch games
-
-            $this->updateSteamGames();
+            $this->fetchSteamGames();
+            $this->updateSteamGames();//?neccesery
         }
+
 
         // retrive active games only
         $this->steamGames = $this->steamUser->games->filter(function($game){
             return $game->active;
         });
         if ( $this->gameIsExpired() ) {
-            //update
+            $this->fetchSteamGames();
+            $this->updateSteamGames();//?neccesery
+        }
+    }
 
-        }// else return
+    private function fetchSteamGames(){
+        $recentlyPlayedGames = new GetRecentlyPlayedGames( ['steamid' => $this->steamUser->steam_id_sixtyfour] );
+        $gameModelDataArray = $recentlyPlayedGames->fetchDataForGameModel();
+        foreach ( $gameModelDataArray as $gameModelData ) {
+            $game = new Game();
+            $gameModelData['user_id'] = $this->steamUser->id;
+            $game->populateWith( $gameModelData );
+            $this->steamGames->add( $game );
+        }
+        Game::onlyActive( $this->steamGames );
     }
 
     private function dump_dates($collection){
@@ -119,40 +136,22 @@ class RecentlyPlayed extends ComponentBase
     public function onRun(){
         $this->updateSteamUser();
         $this->updateSteamGames();
-        $this->buildComponent();
+
+        Game::onlyActive( $this->steamGames );
+        exit;
+
+        //$this->buildComponent();
 
         $activeGames = $this->steamUser->games->filter(function($game){
             return $game->active;
         });
 
-        $lastUpdated = $activeGames->max('updated_at');
-        $this->addExpire($lastUpdated,'games');
-        $now = Carbon::now();
-
-
-        if ( $now->gt($lastUpdated) ) {
-            echo 'udpate it';
-        }else{
-            echo 'don\'t update it';
-        }
-        exit;
-
-        $this->dump_dates($this->steamUser->games);
-        $this->dump_dates($this->steamUser->games->sortBy('updated_at'));
-        exit;
-
-
-        Debug::dump($this->steamUser->games);
-        Debug::dump($this->steamUser->games->sortBy(function($game){
-                return $game->updated_at;
-        }));
-        exit;
-
-        new RecentlyPlayedGames( ['steamid' => $this->steamUser->steam_id_sixtyfour] );
-
         // template output
         $this->page['username'] = $this->getUser();
         $this->page['games'] = $this->getGames();
+    }
+
+    private function addSteamGame( $game ){
     }
 
     private function getUser(){

@@ -3,12 +3,6 @@
 use Clem\Steam\Api\Method;
 use Config;
 
-use Clem\Steam\Api\Image;
-use Clem\Steam\Api\Data;
-use Clem\Helpers\UrlBuilder;
-use Clem\Steam\Models\Game;
-use Collection;
-
 use Clem\Helpers\Debug;
 
 /**
@@ -17,16 +11,20 @@ use Clem\Helpers\Debug;
 
 class GetRecentlyPlayedGames extends Method
 {
+    public $modelData;
 
     public function __construct( $parameters ){
+        Debug::dump($parameters);
         parent::__construct( $parameters );
     }
 
     // check ranking is available from index of returned array
-    private function fetchDataForGameModel(){
+    // format information i have retrieved
+    public function fetchDataForGameModel(){
 
-        $modelData = array();
+        $this->modelData = array();
         $this->callUrl();
+
 
         foreach($this->response->games as $i => $gameData){
             //$game = new Game();
@@ -38,7 +36,8 @@ class GetRecentlyPlayedGames extends Method
                 $game[$dbKey] = $gameData->$dataKey;
             }
             $game['rank'] = $i;
-
+            $game['img_logo_url'] = $gameData->img_logo_url;
+            $this->modelData[] = $game;
             /*
             $game->name = $gameData->name;
             $game->playtime_recent  = $gameData->playtime_2weeks;
@@ -46,6 +45,7 @@ class GetRecentlyPlayedGames extends Method
             $game->app_id = $gameData->appid;
             */
 
+            // should be done on the model class
             //$game->app_image_url = Image::create( array('appid'=>$gameData->appid,'logoid'=>$gameData->img_logo_url) );
             //$game->app_url  = ( new UrlBuilder( array('appid'=>$gameData->appid), Config::get('clem.steam::api.urltemplates.app_game') ) )->getUrl();
             //$game->active = true;
@@ -55,6 +55,7 @@ class GetRecentlyPlayedGames extends Method
         }
         // deactivate all other games.
         //Game::onlyActive( $this->steamGames );
+        return $this->modelData;
     }
 
 }

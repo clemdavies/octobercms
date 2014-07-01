@@ -1,7 +1,13 @@
 <?php namespace Clem\Steam\Models;
 
 use Clem\Steam\Models\User;
+use Clem\Steam\Api\Image;
+use Clem\Helpers\UrlBuilder;
+use Config;
 use Model;
+
+
+use Clem\Helpers\Debug;
 /**
  * Games that a user has played recently on steam.
  */
@@ -28,6 +34,17 @@ class Game extends Model {
         'user' => ['Clem\Steam\Models\User']
     ];
 
+    public function populateWith( $modelData ){
+        foreach ( $modelData as $key => $value ) {
+            if ( is_null($value) ) continue;
+            $this->$key = $value;
+        }
+        $this->app_image_url = Image::create( array('appid'=>$this->app_id,'logoid'=>$modelData['img_logo_url']) );
+        $this->app_url  = ( new UrlBuilder( array('appid'=>$this->app_id), Config::get('clem.steam::api.urltemplates.app_game') ) )->getUrl();
+        $this->active = true;
+        $this->updateOrSave();
+    }
+
 
     /*
         Updates an object with values in another object.
@@ -41,9 +58,14 @@ class Game extends Model {
         }
     }
 
-    public function onlyActive( $games ){
-        Game::wherenot('id','1,2,3,4,')->active(false);
+    public static function onlyActive( $games ){
+        $ids = [];
+        foreach ( $games->toArray() as $game ){
+            $ids[] = $game['id'];
+        }
+        Debug::dump( Game::whereNotIn('id',$ids) );exit;
     }
+
 
     /*
         if app_id exists
