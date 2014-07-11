@@ -58,6 +58,7 @@ class UrlBuilder
     }
 
     private function validateParameter( $keyPath,$value ){
+            return;
         if( $value == null ){
             throw new RuntimeException('Parameter at '.$keyPath.' must be set prior to url creation. Check config.php.');
         }

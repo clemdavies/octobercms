@@ -6,10 +6,10 @@ use Config;
 use Clem\Helpers\Debug;
 
 /**
-*   -GetRecentlyPlayedGames (v0001)
+*   -GetOwnedGames (v0001)
 */
 
-class GetRecentlyPlayedGames extends Method
+class GetOwnedGames extends Method
 {
     public $modelData;
 
@@ -25,20 +25,27 @@ class GetRecentlyPlayedGames extends Method
         $this->callUrl();
 
 
+
         foreach($this->response->games as $i => $gameData){
-            //$game = new Game();
             $game = Config::get('clem.steam::api.models.game.dbdatakeys');
             foreach ( $game as $dbKey => $dataKey) {
                 if ( is_null($dataKey) ) {
                     continue;
                 }
-                $game[$dbKey] = $gameData->$dataKey;
+                if ( property_exists($gameData, $dataKey) ) {
+                    $game[$dbKey] = $gameData->$dataKey;
+                } else{
+                    $game[$dbKey] = 0;
+                }
             }
-            $game['rank'] = $i;
+            $game['rank'] = 0;
             $game['img_logo_url'] = $gameData->img_logo_url;
             $this->modelData[] = $game;
         }
+
         return $this->modelData;
     }
+
+
 
 }

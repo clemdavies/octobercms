@@ -1,6 +1,5 @@
 <?php
 
-
 return array(
     'api' => array(
         'expire' => array(
@@ -9,9 +8,15 @@ return array(
                 'hours'   => 0,
                 'minutes' => 0
                 ),
-            'game' => array(
+            'recentlyplayed' => array(
                 'hours'   => 0,
-                'minutes' => 10
+                'minutes' => 10,
+                'seconds' => 0
+                ),
+            'gameslibrary' => array(
+                'hours'   => 0,
+                'minutes' => 10,
+                'seconds' => 0
                 )
             ),
         // only use regexpressions for user input data.???
@@ -28,6 +33,7 @@ return array(
         'urltemplates' => array(
             'data'  => 'http://api.steampowered.com/{{interface}}/{{method}}/v{{version}}/',
             'app_image' => 'http://media.steampowered.com/steamcommunity/public/images/apps/{{appid}}/{{logoid}}.jpg',
+            'missing_image' => '/plugins/clem/steam/assets/images/image_missing.jpg',
             'app_page'  => 'http://store.steampowered.com/app/{{appid}}/',
             ),
 
@@ -62,7 +68,25 @@ return array(
                         'format'    => 'json'
                         )
                     )
-                )
+                ),
+            'getownedgames' => array(
+                'urltemplate' => 'data',
+                'parameters' => array(
+                    'required' => array(
+                        'key'     => null,
+                        'steamid' => null
+                        ),
+                    'static'   => array(
+                        'include_played_free_games' => '1',
+                        'include_appinfo' => '1',
+                        'interface' => 'IPlayerService',
+                        'method'    => 'GetOwnedGames',
+                        'version'   => '0001',
+                        'format'    => 'json'
+                        )
+                    )
+                ),
+
             ),// /methods
 
         'models' => array(

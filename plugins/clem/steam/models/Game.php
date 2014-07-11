@@ -3,6 +3,8 @@
 use Clem\Steam\Models\User;
 use Clem\Steam\Api\Image;
 use Clem\Helpers\UrlBuilder;
+use Clem\Helpers\Time;
+use Clem\Steam\Collections\GamesLibrary;
 use Config;
 use Model;
 
@@ -28,22 +30,35 @@ class Game extends Model {
         'active'           => array( 'required' )
     ];
 
-    private static $update = ['rank','playtime_recent','playtime_forever','active'];
+    private static $update = ['rank','app_url','app_image_url','playtime_recent','playtime_forever','active'];
 
     public $belongsTo = [
         'user' => ['Clem\Steam\Models\User']
     ];
 
     public function populateWith( $modelData ){
-        foreach ( $modelData as $key => $value ) {
-            if ( is_null($value) ) continue;
-            $this->$key = $value;
+        foreach ( array_keys(Config::get('clem.steam::api.models.game.dbdatakeys')) as $key ) {
+            if ( is_null($modelData[$key]) ) continue;
+            $this->$key = $modelData[$key];
         }
-        $this->app_image_url = Image::create( array('appid'=>$this->app_id,'logoid'=>$modelData['img_logo_url']) );
-        $this->app_url  = ( new UrlBuilder( array('appid'=>$this->app_id), Config::get('clem.steam::api.urltemplates.app_game') ) )->getUrl();
-        $this->active = true;
-        $this->updateOrSave();
+
+        if ( array_key_exists('img_logo_app_id', $modelData) ) {
+            // uses logo from similarly named app
+            $this->app_image_url = Image::create( array('appid'=>$modelData['img_logo_app_id'],'logoid'=>$modelData['img_logo_url']) );
+        }else if( !is_null($modelData['img_logo_url']) ){
+            // Has own logo
+            $this->app_image_url = Image::create( array('appid'=>$this->app_id,'logoid'=>$modelData['img_logo_url']) );
+        }else{
+            // uses fallback no logo found logo
+            $this->app_image_url =
+                    ( new UrlBuilder( array('appid'=>$this->app_id), Config::get('clem.steam::api.urltemplates.missing_image') ) )->getUrl();
+        }
+
+        $this->app_url  = ( new UrlBuilder( array('appid'=>$this->app_id), Config::get('clem.steam::api.urltemplates.app_page') ) )->getUrl();
+        $this->active = ( $this->playtime_recent != 0 );
+        return $this->updateOrSave();
     }
+
 
 
     /*
@@ -63,7 +78,11 @@ class Game extends Model {
         foreach ( $games->toArray() as $game ){
             $ids[] = $game['id'];
         }
-        Debug::dump( Game::whereNotIn('id',$ids) );exit;
+        $inactiveGames = Game::whereNotIn('id',$ids)->get();
+        $inactiveGames->each(function($inactiveGame){
+            $inactiveGame->active = false;
+            $inactiveGame->save();
+        });
     }
 
 
@@ -78,10 +97,29 @@ class Game extends Model {
         if ( is_null($existing) ) {
             // create record
             $this->save();
+            return $this;
         }else{
             //update record
             $existing->updateWith($this);
+            return $existing;
         }
+    }
+
+    public function playtimeRecentString(){
+        return Time::hourMinuteString( $this->playtime_recent );
+    }
+    public function playtimeForeverString(){
+        return Time::hourMinuteString( $this->playtime_forever );
+    }
+
+    // not used
+    public static function hasLogo($app_id){
+        return ( Game::where('app_id',$app_id)->exists() ) &&
+               ( strlen(Game::where('app_id',$app_id)->first()->app_image_url) > 0 );
+    }
+
+    public function newCollection(array $models = array()){
+        return new GamesLibrary($models);
     }
 
 }

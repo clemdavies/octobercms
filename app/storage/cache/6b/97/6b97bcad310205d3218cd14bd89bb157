@@ -1,16 +1,26 @@
-9999999999s:571:"a:2:{s:5:"mtime";i:1401868832;s:7:"content";s:517:"<div class='panel panel-default'>
+9999999999s:1242:"a:2:{s:5:"mtime";i:1404545902;s:7:"content";s:1187:"<div class='recently-played-games panel panel-default'>
     <div class='panel-heading'>
-        <h3 class='panel-title'>Recently Played</h3>
-        <h3 class='panel-title'>{{ url }}</h3>
+        <h3 class='user-name panel-title'>{{user.persona_name}}Recently Played Games</h3>
+        <a class='user-page-url' href='{{user.profile_url}}'><img class='user-image' src='{{user.profile_image_url}}' /></a>
     </div>
     <div class='panel-body'>
-        <ul class='list-group'>
+        <ul class='games-list list-group'>
             {% for game in games %}
-                <li class='list-group-item'>
-                    <div class='icon'>{{ game.icon }}</div>
-                    <div class='name'>{{ game.name }}</div>
+                <li class='game list-group-item' rank='{{game.rank}}'>
+                    <a class='game-page-link' href='{{game.app_url}}'><img class='game-icon' src='{{ game.app_image_url }}'/></a>
+                    <div class='game-name'>{{ game.name }}</div>
+                    <div class='game-playtime-recent'>{{ game.playtimeRecentString() }}</div>
+                    <div class='game-playtime-forever'>{{ game.playtimeForeverString()  }}</div>
                 </li>
             {% endfor %}
+
         </ul>
     </div>
-</div>";}";
+</div>
+
+<form data-request="onTest" data-request-update="calcresult: '#result'">
+    <input type="text" name="value1"/>
+    <input type="text" name="value2"/>
+    <input type="submit" value="Calculate">
+</form>
+<div id="#result"></div>";}";
