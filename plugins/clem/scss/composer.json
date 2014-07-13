@@ -1,0 +1,15 @@
+{
+    "name": "clem/scss",
+    "description": "Integrates an scss compiler",
+    "homepage": "http://clemdavies.com/plugins/scss",
+    "keywords": ["october", "cms", "clem", "clemdavies", "scss", "css", "compiler", "assets" ],
+    "authors": [
+        {
+            "name": "Clem Davies",
+            "email": "clem@clemdavies.com"
+        }
+    ],
+    "require": {
+        "leafo/scssphp": "0.0.12"
+    }
+}

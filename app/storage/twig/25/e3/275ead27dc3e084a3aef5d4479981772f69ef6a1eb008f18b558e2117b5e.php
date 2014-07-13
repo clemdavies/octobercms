@@ -22,7 +22,7 @@ class __TwigTemplate_25e3275ead27dc3e084a3aef5d4479981772f69ef6a1eb008f18b558e21
 ";
         // line 4
         $context['__cms_component_params'] = [];
-        echo $this->env->getExtension('CMS')->componentFunction("steamrecentlyplayed"        , $context['__cms_component_params']        );
+        echo $this->env->getExtension('CMS')->componentFunction("feedsteamlibrary"        , $context['__cms_component_params']        );
         unset($context['__cms_component_params']);
     }
 

@@ -1,0 +1,34 @@
+description = "Default layout"
+==
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>ClemDavies</title>
+        <link rel="icon" type="image/png" href="" />
+        {% styles %}
+        <link href="{{ [ 'assets/css/theme.css' ]|theme }}" rel="stylesheet">
+    </head>
+    <body>
+
+        <!-- Header -->
+        <header id="layout-header">
+        </header>
+
+        <!-- Content -->
+        <section id="layout-content">
+            {% page %}
+        </section>
+
+        <!-- Footer -->
+        <footer id="layout-footer">
+        </footer>
+
+        <!-- Scripts -->
+        <script src="{{ [
+            'assets/javascript/jquery.js',
+            'assets/javascript/app.js'
+        ]|theme }}"></script>
+        {% framework extras %}
+        {% scripts %}
+    </body>
+</html>

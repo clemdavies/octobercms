@@ -1,0 +1,9 @@
+
+<li class='game list-group-item' rank='{{game.rank}}'>
+    <a class='image-link' href='{{game.app_url}}'><img class='image' src='{{ game.app_image_url }}'/></a>
+    <div class='text'>
+        <div class='game-name'>{{ game.name }}</div>
+        <div class='game-playtime-recent'>{{ game.playtimeRecentString() }}</div>
+        <div class='game-playtime-forever'>{{ game.playtimeForeverString()  }}</div>
+    </div>
+</li>

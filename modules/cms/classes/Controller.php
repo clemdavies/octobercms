@@ -220,7 +220,7 @@ class Controller extends BaseController
     protected function initCustomObjects()
     {
         $this->layoutObj = null;
-        
+
         if (!$this->layout->isFallBack()) {
             CmsException::capture($this->layout, 300, function(){
                 $parser = new CodeParser($this->layout);
@@ -463,6 +463,7 @@ class Controller extends BaseController
      */
     public function renderPartial($name, $parameters = [])
     {
+
         /*
          * Alias @ symbol for ::
          */

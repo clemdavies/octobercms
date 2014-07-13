@@ -1,0 +1,7 @@
+<div class='body'>
+    <ul class='games-list list-group'>
+        {% for game in games %}
+            {% partial __SELF__~'::item' game = game %}
+        {% endfor %}
+    </ul>
+</div>

@@ -1,0 +1,7 @@
+9999999999s:237:"a:2:{s:5:"mtime";i:1405146727;s:7:"content";s:183:"<div class='body'>
+    <ul class='games-list list-group'>
+        {% for game in games %}
+            {% partial __SELF__~'::item' game = game %}
+        {% endfor %}
+    </ul>
+</div>";}";

@@ -1,0 +1,12 @@
+9999999999s:642:"a:2:{s:5:"mtime";i:1405065268;s:7:"content";s:588:"<div class='panel-body'>
+    <ul class='games-list list-group'>
+        {% for game in games %}
+            <li class='game list-group-item' rank='{{game.rank}}'>
+                <a class='game-page-link' href='{{game.app_url}}'><img class='game-icon' src='{{ game.app_image_url }}'/></a>
+                <div class='game-name'>{{ game.name }}</div>
+                <div class='game-playtime-recent'>{{ game.playtimeRecentString() }}</div>
+                <div class='game-playtime-forever'>{{ game.playtimeForeverString()  }}</div>
+            </li>
+        {% endfor %}
+    </ul>
+</div>";}";

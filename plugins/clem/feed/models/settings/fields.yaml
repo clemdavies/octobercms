@@ -1,0 +1,17 @@
+# ===================================
+#  Form Field Definitions
+# ===================================
+
+fields:
+    steam_api_key:
+        label: Steam Api Key
+        description: Your official steam api key.
+        type: text
+        span: left
+        commentAbove: Don't have one? Get one here http://steamcommunity.com/dev/apikey
+    github_api_key:
+        label: Github Api Key
+        description: Your official github api key.
+        type: text
+        span: left
+        commentAbove: Don't have one? Get one here http://github.com/
